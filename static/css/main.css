@@ -1,0 +1,33 @@
+.line{width:100%;height:5px;background:#8152e2;margin-top:50px;}
+#search{background:#8152e2;border-color:#8152e2;color:white;}
+#search:hover{background:#940df3;}
+.nav li{font-size:18px;color:white;font-weight:bold;}
+.nav li a{color:white !important;}
+.nav li:hover{background:#8152e2;}
+.portfolio-item{}
+.portfolio-item img{padding:10px;}
+
+.content-grid{
+	width:1120px;
+	height:500px;
+	margin:0 auto;
+
+}
+.movies-list{background:#f0f0f0;}
+#left{
+	width:80%;
+	height:200px;
+	background:red;
+	float:left;
+}
+.portfolio-item h3{
+	text-align:center;
+	font-size:12px;
+}
+.movieinfo{
+	/*padding:20px;
+	background: rgb(122, 5, 5);
+	background: rgba(0, 0, 0, 0.7);*/
+	box-shadow:2px 2px 2px black;
+	
+}
