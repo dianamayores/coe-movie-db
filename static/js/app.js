@@ -38,7 +38,7 @@ $(function() {
             return  false;
         });
 
-        //movieBasic("138103");
+        NowShowing();
     }
     function searchMovie(query) {
         var searchUrl = baseUrl + 'search/movie';
@@ -52,37 +52,134 @@ $(function() {
     }
 	function NowShowing() {
         var nowShowingUrl = baseUrl + 'movie/now_playing';
-        $('.movies-list').html('');
+        $('.upcoming,.popular,.top').html('');
+		$('.now-showing').html('<h2 style="color:white;margin-left:30px;">NOW SHOWING</h2>');
         $.get(nowShowingUrl, {
             api_key: apiKey
         }, function(response) {
-            displayMovies(response);
+            displayMovies1(response);
+        });
+    }
+	function displayMovies1(data) {
+		var loop = 1;
+        data.results.forEach(function(movie){
+			if(loop <= 12){
+				var imageSrc = config.images.base_url + config.images.poster_sizes[3] + movie.poster_path;
+				var backSrc = config.images.base_url + config.images.poster_sizes[3] + movie.backdrop_path;
+				var object = {
+					"movie-id" : movie.id,
+					"img" : imageSrc,
+					"title": movie.original_title,
+					"backdrop": backSrc,
+					"vote": movie.vote_average,
+					"release": movie.release_date
+				};
+
+				var raw = $("#Handlebars-Template").html();
+				var template = Handlebars.compile(raw);
+				var html = template(object);
+				$('.now-showing').append(html);
+				loop++;
+			}
         });
     }
 	function Upcoming() {
         var upcomingUrl = baseUrl + 'movie/upcoming';
-        $('.movies-list').html('');
+        $('.now-showing,.popular,.top').html('');
+        $('.upcoming').html('<h2 style="color:white;margin-left:30px;">UPCOMING MOVIES</h2>');
         $.get(upcomingUrl, {
             api_key: apiKey
         }, function(response) {
-            displayMovies(response);
+            displayMovies2(response);
         });
-    }function Popular() {
+    }
+	function displayMovies2(data) {
+	var loop = 1;
+	data.results.forEach(function(movie){
+		if(loop <= 12){
+			var imageSrc = config.images.base_url + config.images.poster_sizes[3] + movie.poster_path;
+				var backSrc = config.images.base_url + config.images.poster_sizes[3] + movie.backdrop_path;
+				var object = {
+					"movie-id" : movie.id,
+					"img" : imageSrc,
+					"title": movie.original_title,
+					"backdrop": backSrc,
+					"vote": movie.vote_average,
+					"release": movie.release_date
+				};
+
+				var raw = $("#Handlebars-Template").html();
+				var template = Handlebars.compile(raw);
+				var html = template(object);
+				$('.now-showing').append(html);
+				loop++;
+		}
+	});
+    }
+	function Popular() {
         var popularUrl = baseUrl + 'movie/popular';
-        $('.movies-list').html('');
+        $('.now-showing,.upcoming,.top').html('');
+       $('.popular').html('<h2 style="color:white;margin-left:30px;">POPULAR MOVIES</h2>');
         $.get(popularUrl, {
             api_key: apiKey
         }, function(response) {
-            displayMovies(response);
+            displayMovies3(response);
+        });
+    }
+	function displayMovies3(data) {
+		var loop = 1;
+        data.results.forEach(function(movie){
+			if(loop <= 12){
+				var imageSrc = config.images.base_url + config.images.poster_sizes[3] + movie.poster_path;
+				var backSrc = config.images.base_url + config.images.poster_sizes[3] + movie.backdrop_path;
+				var object = {
+					"movie-id" : movie.id,
+					"img" : imageSrc,
+					"title": movie.original_title,
+					"backdrop": backSrc,
+					"vote": movie.vote_average,
+					"release": movie.release_date
+				};
+
+				var raw = $("#Handlebars-Template").html();
+				var template = Handlebars.compile(raw);
+				var html = template(object);
+				$('.now-showing').append(html);
+				loop++;
+			}
         });
     }
     function TopRated() {
         var topRatedUrl = baseUrl + 'movie/top_rated';
-        $('.movies-list').html('');
+        $('.now-showing,.upcoming,.popular').html('');
+		$('.top').html('<h2 style="color:white;margin-left:30px;">TOP RATED MOVIES</h2>');
         $.get(topRatedUrl, {
             api_key: apiKey
         }, function(response) {
-            displayMovies(response);
+            displayMovies4(response);
+        });
+    }
+	function displayMovies4(data) {
+		var loop = 1;
+        data.results.forEach(function(movie){
+			if(loop <= 12){
+				var imageSrc = config.images.base_url + config.images.poster_sizes[3] + movie.poster_path;
+				var backSrc = config.images.base_url + config.images.poster_sizes[3] + movie.backdrop_path;
+				var object = {
+					"movie-id" : movie.id,
+					"img" : imageSrc,
+					"title": movie.original_title,
+					"backdrop": backSrc,
+					"vote": movie.vote_average,
+					"release": movie.release_date
+				};
+
+				var raw = $("#Handlebars-Template").html();
+				var template = Handlebars.compile(raw);
+				var html = template(object);
+				$('.now-showing').append(html);
+				loop++;
+			}
         });
     }
     function displayMovies(data) {
@@ -90,16 +187,20 @@ $(function() {
         data.results.forEach(function(movie){
 			if(loop <= 12){
 				var imageSrc = config.images.base_url + config.images.poster_sizes[3] + movie.poster_path;
+				var backSrc = config.images.base_url + config.images.poster_sizes[3] + movie.backdrop_path;
 				var object = {
 					"movie-id" : movie.id,
 					"img" : imageSrc,
-					"title": movie.title
+					"title": movie.original_title,
+					"backdrop": backSrc,
+					"vote": movie.vote_average,
+					"release": movie.release_date
 				};
 
 				var raw = $("#Handlebars-Template").html();
 				var template = Handlebars.compile(raw);
 				var html = template(object);
-				$('.movies-list').append(html);
+				$('.now-showing').append(html);
 				loop++;
 			}
         });
@@ -133,11 +234,11 @@ $(function() {
             var poster = config.images.base_url + config.images.poster_sizes[1];
             for(var i=0;i<movies.length;i++){
                 allMovies += '<div class="col-sm-3 col-xs-6">'+
-                                '<a href="/movie/'+movies[i].id+'">'+
+                                '<a href="/view/'+movies[i].id+'">'+
                                     '<img class="img-responsive portfolio-item" src="'+poster+movies[i].poster_path+'" alt="">'+
                                 '</a>'+
                                 '<h5>'+
-                                    '<a href="/movie/'+movies[i].id+'">'+movies[i].title+'</a>'+
+                                    '<a href="/view/'+movies[i].id+'">'+movies[i].title+'</a>'+
                                 '</h5>'+
                               '</div>';
             }

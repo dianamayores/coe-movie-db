@@ -29,5 +29,5 @@ class Movie (webapp2.RequestHandler):
 			 
 application = webapp2.WSGIApplication([
     ('/', MainHandler),
-	('/view', Movie),
+	('/view/(.*)',Movie),
 ], debug=True)
