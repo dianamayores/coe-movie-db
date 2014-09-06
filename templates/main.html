@@ -10,7 +10,10 @@
     <link rel="stylesheet" type="text/css" href="/static/css/main.css">
 </head>
 
-<body>
+<body style="background-image:url('/static/img/bg.jpg');
+	background-size:100% 100%;
+	background-repeat:no-repeat;
+	background-attachment:fixed;">
 
 	<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
 		<div class="container">
@@ -78,8 +81,12 @@
 				<a class="carousel-control right" href="#this-carousel-id" data-slide="next"></a>
 			</div><!-- /.carousel -->
 			<div class='row movies-list'>
-				<div class="row now-showing">
+				<div class="row search">
 				
+				</div>
+				
+				<div class="row now-showing">
+					
 				</div>
 	
 				<div class="row upcoming">
@@ -114,6 +121,7 @@
 			</a>
 			<h3>
 				<a style="font-size:20px;color:white;" href="/view/{{movie-id}}">{{title}}</a>
+				<p style="font-size:15px;color:white;">Casts: {{cast}}</p>
 				<p style="font-size:15px;color:white;">Release Date: {{release}}</p>
 				<p style="font-size:12px;color:orange;">Movie Rating: {{vote}}</p>
 			</h3>

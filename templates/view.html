@@ -9,10 +9,16 @@
     <link rel="stylesheet" type="text/css" href="/static/css/bootstrap.css">
     <link rel="stylesheet" type="text/css" href="/static/css/main.css">
 	
-	
+	<style>
+		.castsImg{display:inline-block !important;float:left !important;padding-right:10px;font-size:12px;}
+		#casts ul{width:100%;background:red;}
+	</style>
 </head>
 
-<body>
+<body style="background-image:url('/static/img/bg.jpg');
+	background-size:100% 100%;
+	background-repeat:no-repeat;
+	background-attachment:fixed;">
 
 	<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
 		<div class="container">
@@ -51,6 +57,7 @@
 
                     <h1 class="page-header" id="title">
                     </h1>
+					
                 </div>
             </div>
             <!-- /.row -->
@@ -65,8 +72,20 @@
                 <div class="col-md-4">
                     <h3>Synopsis</h3>
                     <p id="overview"></p>
-                    <h3>Casts</h3>
-                    <ul id="casts">
+					<br/><br/><br/>
+                </div>
+				
+				<div class="col-md-4">
+                    <h3>Tagline</h3>
+                    <p id="tagline"></p>
+                </div>
+
+            </div>
+			 <div class="row">
+				
+				 <div class="col-lg-12 portfolio-item">
+                    <h3 class="page-header">Casts</h3>
+                    <ul id="casts" style="list-style:none;background:red;">
                     </ul>
                 </div>
 
@@ -98,6 +117,10 @@
             </footer>
         </div>
         <div class='row movies-list'>
+			<div class="row search">
+			
+			</div>
+			
 			<div class="row now-showing">
 			
 			</div>
@@ -163,13 +186,53 @@
     }
 
     function setEventHandlers(config) {
-        movieBasic(params[1]);
+        $('#search').click(function() {
+            var query = $('.input-query').val();
+            searchMovie(query);
+            return  false;
+        });
+		movieBasic(params[1]);
+    }
+	 function searchMovie(query) {
+        var searchUrl = baseUrl + 'search/movie';
+        $('.now-showing,.popular,.top,.upcoming').html('');
+		$('.search').html('<h2 style="color:white;margin-left:30px;">SEARCHED MOVIES</h2>');
+        $.get(searchUrl, {
+            query: query,
+            api_key: apiKey
+        }, function(response) {
+            displayMovies5(response);
+        });
+    }
+	function displayMovies5(data) {
+		var loop = 1;
+        data.results.forEach(function(movie){
+			if(loop <= 12){
+				var imageSrc = config.images.base_url + config.images.poster_sizes[3] + movie.poster_path;
+				var backSrc = config.images.base_url + config.images.poster_sizes[3] + movie.backdrop_path;
+				var object = {
+					"movie-id" : movie.id,
+					"img" : imageSrc,
+					"title": movie.original_title,
+					"backdrop": backSrc,
+					"vote": movie.vote_average,
+					"release": movie.release_date
+				};
+
+				var raw = $("#Handlebars-Template").html();
+				var template = Handlebars.compile(raw);
+				var html = template(object);
+				$('.search').append(html);
+				loop++;
+			}
+        });
     }
 	function movieBasic(id){
     url = baseUrl + "movie/"+id;
     reqParam = {api_key:api_key};
     $.get(url,reqParam,function(response){
         $("#title").html(response.original_title);
+        $("#tagline").html(response.tagline);
         $("#overview").html(response.overview);
 
         url = baseUrl + "movie/"+id+"/videos";
@@ -182,7 +245,7 @@
         $.get(url,reqParam,function(response){
             var casts = "";
             for(var i=0;i<response.cast.length;i++){
-                casts+="<li>"+response.cast[i].name+"</li>"
+                casts+="<li class='castsImg'><center><img width='120px' height='150px' src='http://image.tmdb.org/t/p/w342"+response.cast[i].profile_path+"'><br/>"+response.cast[i].name+"<br/>as<br/>"+response.cast[i].character+"</center></li>";
             }
             $("#casts").html(casts);
         });

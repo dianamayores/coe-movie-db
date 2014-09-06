@@ -16,7 +16,7 @@ $(function() {
     }
 
     function setEventHandlers(config) {
-        $('#form-search').submit(function() {
+        $('#search').click(function() {
             var query = $('.input-query').val();
             searchMovie(query);
             return  false;
@@ -42,12 +42,36 @@ $(function() {
     }
     function searchMovie(query) {
         var searchUrl = baseUrl + 'search/movie';
-        $('.movies-list').html('');
+        $('.now-showing,.popular,.top,.upcoming').html('');
+		$('.search').html('<h2 style="color:white;margin-left:30px;">SEARCHED MOVIES</h2>');
         $.get(searchUrl, {
             query: query,
             api_key: apiKey
         }, function(response) {
-            displayMovies(response);
+            displayMovies5(response);
+        });
+    }
+	function displayMovies5(data) {
+		var loop = 1;
+        data.results.forEach(function(movie){
+			if(loop <= 12){
+				var imageSrc = config.images.base_url + config.images.poster_sizes[3] + movie.poster_path;
+				var backSrc = config.images.base_url + config.images.poster_sizes[3] + movie.backdrop_path;
+				var object = {
+					"movie-id" : movie.id,
+					"img" : imageSrc,
+					"title": movie.original_title,
+					"backdrop": backSrc,
+					"vote": movie.vote_average,
+					"release": movie.release_date
+				};
+
+				var raw = $("#Handlebars-Template").html();
+				var template = Handlebars.compile(raw);
+				var html = template(object);
+				$('.search').append(html);
+				loop++;
+			}
         });
     }
 	function NowShowing() {
