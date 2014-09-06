@@ -9,9 +9,7 @@
     <link rel="stylesheet" type="text/css" href="/static/css/bootstrap.css">
     <link rel="stylesheet" type="text/css" href="/static/css/main.css">
 	
-	<script type="text/javascript">
-      movieBasic('movie-id');
-    </script>
+	
 </head>
 
 <body>
@@ -119,10 +117,10 @@
     </div><!-- /.container -->
 
     <script src="/static/js/vendors/jquery.js"></script>
+    <script src="/static/js/vendors/handlebars.js"></script>
     <script src="/static/js/vendors/bootstrap.min.js"></script>
-	<script src="/static/js/vendors/handlebars.js"></script>
-    <script src="/static/js/app.js"></script>
     <script src="/static/js/bootstrap.js"></script>
+    <script src="/static/js/app.js"></script>
 	
 	{% raw %}
 	<script id="Handlebars-Template" type="text/x-handlebars-template">
@@ -143,9 +141,77 @@
 	<script>
 		$(document).ready(function(){
 			$('.carousel').carousel({
-			interval: 2000
+				interval: 2000
 			});
+		var url = window.location.href;
+		var params = url.split('view/');
+
+	$(function() {
+    var config;
+    var baseUrl = 'http://api.themoviedb.org/3/',
+        apiKey = '88cd46e481deedf9c64e2442159b9047';
+		var api_key = '88cd46e481deedf9c64e2442159b9047';
+
+    function initialize(callback) {
+        $.get(baseUrl + 'configuration', {
+            api_key: '88cd46e481deedf9c64e2442159b9047'
+        },function(res) {
+            config = res;
+            console.log(config);
+            callback(config);
+        });
+    }
+
+    function setEventHandlers(config) {
+        movieBasic(params[1]);
+    }
+	function movieBasic(id){
+    url = baseUrl + "movie/"+id;
+    reqParam = {api_key:api_key};
+    $.get(url,reqParam,function(response){
+        $("#title").html(response.original_title);
+        $("#overview").html(response.overview);
+
+        url = baseUrl + "movie/"+id+"/videos";
+        $.get(url,reqParam,function(response){
+            var html = '<embed width="750" height="500" src="https://www.youtube.com/v/'+response.results[0].key+'" type="application/x-shockwave-flash">'
+            $("#trailer").html(html);
+        });
+
+        url = baseUrl + "movie/"+id+"/credits";
+        $.get(url,reqParam,function(response){
+            var casts = "";
+            for(var i=0;i<response.cast.length;i++){
+                casts+="<li>"+response.cast[i].name+"</li>"
+            }
+            $("#casts").html(casts);
+        });
+
+        url = baseUrl + "movie/"+id+"/similar";
+        $.get(url,reqParam,function(response){
+            var movies = response.results;
+            var allMovies = "";
+            var poster = config.images.base_url + config.images.poster_sizes[1];
+            for(var i=0;i<movies.length;i++){
+                allMovies += '<div class="col-sm-3 col-xs-6">'+
+                                '<a href="/view/'+movies[i].id+'">'+
+                                    '<img class="img-responsive portfolio-item" src="'+poster+movies[i].poster_path+'" alt="">'+
+                                '</a>'+
+                                '<h5>'+
+                                    '<a href="/view/'+movies[i].id+'">'+movies[i].title+'</a>'+
+                                '</h5>'+
+                              '</div>';
+            }
+            $("#similar").html(allMovies);
+        });
+
+    });
+}
+    initialize(setEventHandlers);
+
+});
 		});
+		
 	</script>
 </body>
 
